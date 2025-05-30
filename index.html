@@ -1,0 +1,2389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ahinsadham Veterinary Hospital Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        :root {
+    --bg-color: #f5f5f5;
+    --text-color: #333;
+    --card-bg: white;
+    --sidebar-bg: #2c3e5c;
+    --header-bg: white;
+    --border-color: #dee2e6;
+    --table-header-bg: #f8f9fa;
+}
+
+/* Dark mode variables */
+[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --text-color: #ffffff;
+    --card-bg: #2d2d2d;
+    --sidebar-bg: #1f2937;
+    --header-bg: #2d2d2d;
+    --border-color: #444444;
+    --table-header-bg: #333333;
+    --card-text: #ffffff;
+    --card-blue: #3498db;
+    --card-purple: #9b59b6;
+    --card-green: #2ecc71;
+    --card-yellow: #f39c12;
+    --card-red: #e74c3c;
+}
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: #2c3e5c;
+            color: white;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .red-text {
+            color: #df1010;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 0;
+            border-bottom: 1px solid #3a4d6a;
+            cursor: pointer;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #3a4d6a;
+            padding-left: 10px;
+        }
+
+        .section-title {
+            color: #ccc;
+            margin-top: 15px;
+            padding: 8px 0;
+            border-bottom: 1px solid #3a4d6a;
+            cursor: pointer;
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .admin {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .power-btn {
+            background: #df1010;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .month-picker {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+        .download-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 5px;
+        }
+
+        .download-btn:hover {
+            background: #218838;
+        }
+
+        /* Cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 5px solid;
+        }
+
+        .card.blue { border-left-color: #3498db; }
+        .card.purple { border-left-color: #9b59b6; }
+        .card.green { border-left-color: #2ecc71; }
+        .card.yellow { border-left-color: #f39c12; }
+        .card.red { border-left-color: #e74c3c; }
+
+        .card p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .card h3 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-container h2 {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .sub-id {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .new { background: #28a745; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; }
+        .paid { background: #007bff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; }
+        .offline { background: #6c757d; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border: none;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            position: relative;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        /* Patient Type Selection */
+        .patient-type-selection {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .patient-type-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .patient-type-btn {
+            background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .patient-type-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+
+        .patient-type-btn.ipd {
+            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .patient-type-btn.ipd:hover {
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Form Styles */
+        .patient-form {
+            display: none;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .info-icon {
+            color: #007bff;
+            cursor: help;
+            font-size: 14px;
+        }
+
+        .form-control {
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .form-control:disabled {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        .auto-field {
+            background: #e8f5e8 !important;
+            border-color: #28a745;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .patient-type-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Success message style */
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+    .delete-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .delete-btn:hover {
+        background: #c82333;
+    }
+
+/* Add these media queries at the end of your style section */
+@media screen and (max-width: 1200px) {
+    .cards {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .container {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        width: 220px;
+    }
+
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 2% auto;
+    }
+
+    .patient-type-buttons {
+        flex-direction: row;
+        gap: 15px;
+    }
+
+    .patient-type-btn {
+        padding: 15px 30px;
+        font-size: 16px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 10px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        order: 2;
+        padding: 10px;
+    }
+
+    .sidebar h2 {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .main-content {
+        padding: 10px;
+    }
+
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .card h3 {
+        font-size: 20px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .header-buttons {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .month-picker {
+        width: 120px;
+    }
+
+    .download-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    .patient-type-buttons {
+        flex-direction: column;
+    }
+
+    .patient-type-btn {
+        width: 100%;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .header span {
+        font-size: 16px;
+    }
+
+    .admin {
+        display: block;
+        margin-top: 5px;
+    }
+
+    .power-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+
+    .form-control {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .submit-btn {
+        padding: 12px 30px;
+        font-size: 14px;
+    }
+
+    .header-buttons {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .month-picker,
+    .download-btn {
+        width: 100%;
+        margin: 2px 0;
+    }
+}
+
+/* Add dark mode support for system preference */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
+
+    .card, .table-container, .modal-content {
+        background-color: #2d2d2d;
+        color: #ffffff;
+    }
+
+    .form-control {
+        background-color: #333333;
+        color: #ffffff;
+        border-color: #444444;
+    }
+
+    .header {
+        background-color: #2d2d2d;
+    }
+
+    th {
+        background-color: #333333;
+        color: #ffffff;
+    }
+
+    td {
+        border-color: #444444;
+    }
+
+    .admin {
+        color: #bbbbbb;
+    }
+}
+
+.message {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: white;
+    z-index: 1000;
+}
+
+.message.success {
+    background-color: #28a745;
+}
+
+.message.error {
+    background-color: #dc3545;
+}
+
+#authorize_button {
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#authorize_button:hover {
+    background-color: #357abd;
+}
+
+/* Dark mode toggle button */
+.theme-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 18px;
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+}
+
+.theme-btn::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background: currentColor;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.theme-btn:hover::after {
+    transform: scaleX(1);
+}
+
+/* Update the dark mode variables in your CSS */
+[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --text-color: #ffffff;
+    --card-bg: #2d2d2d;
+    --sidebar-bg: #1f2937;
+    --header-bg: #2d2d2d;
+    --border-color: #444444;
+    --table-header-bg: #333333;
+    --card-text: #ffffff;
+    --card-blue: #3498db;
+    --card-purple: #9b59b6;
+    --card-green: #2ecc71;
+    --card-yellow: #f39c12;
+    --card-red: #e74c3c;
+}
+
+/* Update the card styles */
+[data-theme="dark"] .card {
+    background-color: var(--card-bg);
+    border-left-width: 8px;
+}
+
+[data-theme="dark"] .card p {
+    color: #bbbbbb;
+}
+
+[data-theme="dark"] .card h3 {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .card.blue { 
+    border-left-color: var(--card-blue);
+    box-shadow: 0 2px 10px rgba(52, 152, 219, 0.2);
+}
+
+[data-theme="dark"] .card.purple { 
+    border-left-color: var(--card-purple);
+    box-shadow: 0 2px 10px rgba(155, 89, 182, 0.2);
+}
+
+[data-theme="dark"] .card.green { 
+    border-left-color: var(--card-green);
+    box-shadow: 0 2px 10px rgba(46, 204, 113, 0.2);
+}
+
+[data-theme="dark"] .card.yellow { 
+    border-left-color: var(--card-yellow);
+    box-shadow: 0 2px 10px rgba(243, 156, 18, 0.2);
+}
+
+[data-theme="dark"] .card.red { 
+    border-left-color: var(--card-red);
+    box-shadow: 0 2px 10px rgba(231, 76, 60, 0.2);
+}
+
+/* Update status badges for dark mode */
+[data-theme="dark"] .new { 
+    background: #2ecc71;
+    color: white;
+}
+
+[data-theme="dark"] .paid { 
+    background: #3498db;
+    color: white;
+}
+
+[data-theme="dark"] .offline { 
+    background: #95a5a6;
+    color: white;
+}
+
+/* Update table styles for dark mode */
+[data-theme="dark"] .table-container {
+    background-color: var(--card-bg);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+[data-theme="dark"] .table-container h2 {
+    color: var(--text-color);
+    background-color: var(--table-header-bg);
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .sub-id {
+    color: #bbbbbb;
+}
+
+/* Update today's row highlighting in dark mode */
+[data-theme="dark"] .today-row {
+    background-color: rgba(46, 204, 113, 0.15);
+}
+
+/* Update form controls for dark mode */
+[data-theme="dark"] .form-control {
+    background-color: #333333;
+    color: #ffffff;
+    border-color: #444444;
+}
+
+[data-theme="dark"] .form-control:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+[data-theme="dark"] .auto-field {
+    background-color: rgba(46, 204, 113, 0.15) !important;
+    border-color: #2ecc71;
+}
+
+/* Update success message for dark mode */
+[data-theme="dark"] .success-message {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: #2ecc71;
+    border-color: #2ecc71;
+}
+
+/* Update modal styles for dark mode */
+[data-theme="dark"] .modal-content {
+    background-color: var(--card-bg);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+[data-theme="dark"] .modal-header {
+    background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+}
+    </style>
+    <!-- Add this in the <head> section -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://accounts.google.com/gsi/client"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2><span class="red-text">AHINSADHAM</span><br>VETERINARY HOSPITAL</h2>
+            <a href="#" class="active" onclick="showContent('dashboard')">Dashboard</a>
+            <a href="#" onclick="openPatientModal()">Add New Patient</a>
+            <a href="#" onclick="showContent('operations')">Operations</a>
+            <a onclick="showContent('visitRecords')">Visit Records</a>
+            <a onclick="showContent('deathRecords')">Death Records</a>
+        </div>
+
+        <!-- Main content -->
+        <div class="main-content">
+            <!-- Dashboard Content -->
+            <div id="dashboardContent">
+                <div class="header">
+                    <span>Dashboard <span class="admin">[Administrator]</span></span>
+                    <!-- Update the dashboard header buttons -->
+                    <div class="header-buttons">
+                        <button id="darkModeToggle" class="theme-btn" onclick="toggleDarkMode()">🌓</button>
+                        <input type="month" id="monthSelector" class="month-picker" onchange="handleMonthChange(this.value)">
+                        <button class="download-btn" onclick="downloadSectionData('patients', 'today')">Download Today's Data</button>
+                        <button class="download-btn" onclick="downloadSectionData('patients', 'month')">Download Monthly Data</button>
+                        <button class="power-btn">⏻</button>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="cards">
+                    <div class="card blue">
+                        <p>OPD Patients</p>
+                        <h3><span id="opdCount">0</span> / <span id="totalOpdCount">0</span></h3>
+                        <small>Today / Total</small>
+                    </div>
+                    <div class="card purple">
+                        <p>IPD Patients</p>
+                        <h3><span id="ipdCount">0</span> / <span id="totalIpdCount">0</span></h3>
+                        <small>Today / Total</small>
+                    </div>
+                    <div class="card green">
+                        <p>Today's OPERATIONS</p>
+                        <h3 id="operationsCount">0</h3>
+                    </div>
+                    <div class="card yellow">
+                        <p>Today's VISITS</p>
+                        <h3>0.00</h3>
+                    </div>
+                    <div class="card red">
+                        <p>Today's DEATHS</p>
+                        <h3>0.00</h3>
+                    </div>
+                </div>
+
+                <!-- Patient Table -->
+                <div class="table-container">
+                    <h2>Today Patient List</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>PID</th>
+                                <th>Patient</th>
+                                <th>Age/Gender</th>
+                                <th>Patient Date</th>
+                                <th>Mobile</th>
+                                <th>Pt./Fee Type</th>
+                                <th>Source</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>SHIVADHAR CHANDRAWANSHI<br><span class="sub-id">SH230311020196</span></td>
+                                <td>55 / MALE</td>
+                                <td>11/10/2023<br>12:00 PM - 2:00 PM</td>
+                                <td>1234567890</td>
+                                <td><span class="new">NEW</span><br><span class="paid">PAID</span></td>
+                                <td><span class="offline">OFFLINE</span></td>
+                                <td>
+                                    <button class="prescription-btn" onclick="openPrescriptionModal(1)">📋 Prescription</button>
+                                    <button class="delete-btn" onclick="deletePatient(1)">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>SANGITA DEVI<br><span class="sub-id">SH230311020197</span></td>
+                                <td>35 / FEMALE</td>
+                                <td>11/10/2023<br>12:00 PM - 2:00 PM</td>
+                                <td>1234567890</td>
+                                <td><span class="new">NEW</span><br><span class="paid">PAID</span></td>
+                                <td><span class="offline">OFFLINE</span></td>
+                                <td>
+                                    <button class="prescription-btn" onclick="openPrescriptionModal(2)">📋 Prescription</button>
+                                    <button class="delete-btn" onclick="deletePatient(2)">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>SACHIN KUMAR<br><span class="sub-id">SH230311020198</span></td>
+                                <td>25 / MALE</td>
+                                <td>11/10/2023<br>12:00 PM - 2:00 PM</td>
+                                <td>1234567890</td>
+                                <td><span class="new">NEW</span><br><span class="paid">PAID</span></td>
+                                <td><span class="offline">OFFLINE</span></td>
+                                <td>
+                                    <button class="prescription-btn" onclick="openPrescriptionModal(3)">📋 Prescription</button>
+                                    <button class="delete-btn" onclick="deletePatient(3)">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>ANITA KUMARI<br><span class="sub-id">SH230311020199</span></td>
+                                <td>21 / FEMALE</td>
+                                <td>11/10/2023<br>12:00 PM - 2:00 PM</td>
+                                <td>1234567890</td>
+                                <td><span class="new">NEW</span><br><span class="paid">PAID</span></td>
+                                <td><span class="offline">OFFLINE</span></td>
+                                <td>
+                                    <button class="prescription-btn" onclick="openPrescriptionModal(4)">📋 Prescription</button>
+                                    <button class="delete-btn" onclick="deletePatient(4)">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Operations Content -->
+            <div id="operationsContent" style="display: none;">
+                <!-- Operations Content Header -->
+<div class="header">
+    <span>Operations <span class="admin">[Administrator]</span></span>
+    <div class="header-buttons">
+        <button id="darkModeToggle" class="theme-btn" onclick="toggleDarkMode()">🌓</button>
+        <input type="month" id="operationsMonthSelector" class="month-picker" onchange="handleMonthChange(this.value)">
+        <button class="download-btn" onclick="downloadSectionData('operations', 'today')">Download Today's Data</button>
+        <button class="download-btn" onclick="downloadSectionData('operations', 'month')">Download Monthly Data</button>
+        <button class="power-btn">⏻</button>
+    </div>
+</div>
+
+                <!-- Operations Summary -->
+                <div class="cards">
+                    <div class="card green">
+                        <p>Total Operations Today</p>
+                        <h3 id="totalOperations">0</h3>
+                    </div>
+                    <div class="card blue">
+                        <p>OPD Operations</p>
+                        <h3 id="opdOperations">0</h3>
+                    </div>
+                    <div class="card purple">
+                        <p>IPD Operations</p>
+                        <h3 id="ipdOperations">0</h3>
+                    </div>
+                </div>
+
+                <!-- Operations Table -->
+                <div class="table-container">
+                    <h2>Today's Operations List</h2>
+                    <table id="operationsTable">
+                        <thead>
+                            <tr>
+                                <th>Operation No.</th>
+                                <th>Patient Name</th>
+                                <th>Date</th>
+                                <th>Village</th>
+                                <th>Tag No.</th>
+                                <th>Procedure</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Operations will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add this inside the operationsContent div, after the cards section -->
+                <div class="operation-form">
+                    <h3>Log New Operation</h3>
+                    <form id="operationForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="operationNumber">Operation Number <span class="info-icon" title="Automatically generated">ℹ</span></label>
+                                <input type="text" id="operationNumber" name="operationNumber" class="form-control auto-field" readonly>
+                            </div>
+                            
+
+                            <div class="form-group">
+                                <label for="operationName">Patient Name</label>
+                                <input type="text" id="operationName" name="operationName" class="form-control" placeholder="Enter patient name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="operationDate">Date</label>
+                                <input type="date" id="operationDate" name="operationDate" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="operationVillage">Village</label>
+                                <input type="text" id="operationVillage" name="operationVillage" class="form-control" placeholder="Enter village name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="operationTagNo">Tag Number</label>
+                                <input type="text" id="operationTagNo" name="operationTagNo" class="form-control" placeholder="Enter tag number">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="operationProcedure">Operation Procedure</label>
+                                <textarea id="operationProcedure" name="operationProcedure" class="form-control" rows="4" placeholder="Describe the operation procedure" required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">SAVE OPERATION</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Death Records Content -->
+            <div id="deathRecordsContent" style="display: none;">
+                <!-- Death Records Content Header -->
+<div class="header">
+    <span>Death Records <span class="admin">[Administrator]</span></span>
+    <div class="header-buttons">
+        <button id="darkModeToggle" class="theme-btn" onclick="toggleDarkMode()">🌓</button>
+        <input type="month" id="deathsMonthSelector" class="month-picker" onchange="handleMonthChange(this.value)">
+        <button class="download-btn" onclick="downloadSectionData('deaths', 'today')">Download Today's Data</button>
+        <button class="download-btn" onclick="downloadSectionData('deaths', 'month')">Download Monthly Data</button>
+        <button class="power-btn">⏻</button>
+    </div>
+</div>
+
+                <div class="cards">
+                    <div class="card red">
+                        <p>Total Deaths Today</p>
+                        <h3 id="totalDeaths">0</h3>
+                    </div>
+                </div>
+
+                <!-- Update the death record form -->
+                <div class="operation-form">
+                    <h3>Record New Death</h3>
+                    <form id="deathRecordForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="deathDate">Date of Death</label>
+                                <input type="date" id="deathDate" name="deathDate" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="animalType">Species</label>
+                                <select id="animalType" name="animalType" class="form-control" required>
+                                    <option value="">Select Species</option>
+                                    <option value="cattle">Cattle</option>
+                                    <option value="buffalo">Buffalo</option>
+                                    <option value="goat">Goat</option>
+                                    <option value="sheep">Sheep</option>
+                                    <option value="pig">Pig</option>
+                                    <option value="dog">Dog</option>
+                                    <option value="cat">Cat</option>
+                                    <option value="horse">Horse</option>
+                                    <option value="poultry">Poultry</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tagNo">Tag Number</label>
+                                <input type="text" id="tagNo" name="tagNo" class="form-control" placeholder="Enter tag number">
+                            </div>
+                            <div class="form-group">
+                                <label for="village">Village</label>
+                                <input type="text" id="village" name="village" class="form-control" placeholder="Enter village name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="mobile">Mobile Number</label>
+                                <input type="tel" id="deathMobile" name="mobile" class="form-control" placeholder="Enter mobile number" pattern="[0-9]{10}">
+                            </div>
+                            <div class="form-group">
+                                <label for="causeOfDeath">Cause of Death</label>
+                                <textarea id="causeOfDeath" name="causeOfDeath" class="form-control" rows="4" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="remarks">Remarks</label>
+                                <textarea id="remarks" name="remarks" class="form-control" rows="4" placeholder="Enter additional remarks"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">SAVE RECORD</button>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <h2>Death Records List</h2>
+                    <table id="deathRecordsTable">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Species</th>
+            <th>Tag No.</th>
+            <th>Village</th>
+            <th>Mobile</th>
+            <th>Cause of Death</th>
+            <th>Remarks</th>
+            <th>Recorded By</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Death records will be populated here -->
+    </tbody>
+</table>
+                </div>
+            </div>
+
+            <!-- Visit Records Content -->
+            <div id="visitRecordsContent" style="display: none;">
+                <!-- Visit Records Content Header -->
+<div class="header">
+    <span>Visit Records <span class="admin">[Administrator]</span></span>
+    <div class="header-buttons">
+        <button id="darkModeToggle" class="theme-btn" onclick="toggleDarkMode()">🌓</button>
+        <input type="month" id="visitsMonthSelector" class="month-picker" onchange="handleMonthChange(this.value)">
+        <button class="download-btn" onclick="downloadSectionData('visits', 'today')">Download Today's Data</button>
+        <button class="download-btn" onclick="downloadSectionData('visits', 'month')">Download Monthly Data</button>
+        <button class="power-btn">⏻</button>
+    </div>
+</div>
+
+                <div class="cards">
+                    <div class="card blue">
+                        <p>Total Visits Today</p>
+                        <h3 id="totalVisits">0</h3>
+                    </div>
+                    <div class="card green">
+                        <p>Morning Visits</p>
+                        <h3 id="morningVisits">0</h3>
+                    </div>
+                    <div class="card purple">
+                        <p>Evening Visits</p>
+                        <h3 id="eveningVisits">0</h3>
+                    </div>
+                </div>
+
+                <div class="operation-form">
+                    <h3>Log New Visit</h3>
+                    <form id="visitForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="visitDate">Visit Date</label>
+                                <input type="date" id="visitDate" name="visitDate" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="visitTime">Visit Time</label>
+                                <input type="time" id="visitTime" name="visitTime" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="patientName">Patient Name</label>
+                                <input type="text" id="patientName" name="patientName" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="visitPurpose">Purpose of Visit</label>
+                                <textarea id="visitPurpose" name="visitPurpose" class="form-control" rows="4" required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">SAVE VISIT</button>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <h2>Visit Records</h2>
+                    <table id="visitRecordsTable">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Patient Name</th>
+                                <th>Purpose</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Visit records will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Patient Registration Modal -->
+    <div id="patientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closePatientModal()">&times;</span>
+                <h2>Add New Patient</h2>
+            </div>
+            <div class="modal-body">
+                <!-- Patient Type Selection -->
+                <div id="patientTypeSelection" class="patient-type-selection">
+                    <h3 style="margin-bottom: 20px; color: #333;">Select Patient Type</h3>
+                    <div class="patient-type-buttons">
+                        <button class="patient-type-btn opd" onclick="selectPatientType('opd')">
+                            OPD<br><small>Out Patient Department</small>
+                        </button>
+                        <button class="patient-type-btn ipd" onclick="selectPatientType('ipd')">
+                            IPD<br><small>In Patient Department</small>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Patient Registration Form -->
+                <div id="patientForm" class="patient-form">
+                    <button class="back-btn" onclick="goBackToSelection()">← Back to Selection</button>
+                    
+                    <form id="registrationForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="annualNo">Annual No. <span class="info-icon" title="Automatically generated">ℹ</span></label>
+                                <input type="text" id="annualNo" name="annualNo" class="form-control auto-field" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="monthlyNo">Monthly No. <span class="info-icon" title="Automatically generated">ℹ</span></label>
+                                <input type="text" id="monthlyNo" name="monthlyNo" class="form-control auto-field" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="date">Date</label>
+                                <input type="date" id="date" name="date" class="form-control" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" id="name" name="name" class="form-control" placeholder="Enter patient name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="village">Village</label>
+                                <input type="text" id="village" name="village" class="form-control" placeholder="Enter village name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="mobile">Mobile No.</label>
+                                <input type="tel" id="mobile" name="mobile" class="form-control" placeholder="Enter mobile number" pattern="[0-9]{10}" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="species">Species</label>
+                                <select id="species" name="species" class="form-control" required>
+                                    <option value="">Select Species</option>
+                                    <option value="cattle">Cattle</option>
+                                    <option value="buffalo">Buffalo</option>
+                                    <option value="goat">Goat</option>
+                                    <option value="sheep">Sheep</option>
+                                    <option value="pig">Pig</option>
+                                    <option value="dog">Dog</option>
+                                    <option value="cat">Cat</option>
+                                    <option value="horse">Horse</option>
+                                    <option value="poultry">Poultry</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sex">Sex</label>
+                                <select id="sex" name="sex" class="form-control" required>
+                                    <option value="">Select Sex</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="colour">Colour</label>
+                                <input type="text" id="colour" name="colour" class="form-control" placeholder="Enter animal colour">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="disease">Disease</label>
+                                <input type="text" id="disease" name="disease" class="form-control" placeholder="Enter disease/condition" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="tagNo">Tag No.</label>
+                                <input type="text" id="tagNo" name="tagNo" class="form-control" placeholder="Enter tag number">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="donation">Donation</label>
+                                <input type="number" id="donation" name="donation" class="form-control" placeholder="Enter donation amount" min="0" step="0.01">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="operation">Operation Required?</label>
+                                <select id="operation" name="operation" class="form-control" required>
+                                    <option value="">Select Option</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">REGISTER PATIENT</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prescription Modal -->
+    <div id="prescriptionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closePrescriptionModal()">&times;</span>
+                <h2>Patient Prescription</h2>
+            </div>
+            <div class="modal-body">
+                <form id="prescriptionForm">
+                    <input type="hidden" id="patientId" name="patientId">
+                    <div class="patient-info" id="prescriptionPatientInfo">
+                        <!-- Patient info will be populated here -->
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="history">History/Case History</label>
+                            <textarea id="history" name="history" class="form-control" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="clinicalSigns">Clinical Signs</label>
+                            <textarea id="clinicalSigns" name="clinicalSigns" class="form-control" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="diagnosis">Diagnosis</label>
+                            <textarea id="diagnosis" name="diagnosis" class="form-control" rows="2" required></textarea>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label>Treatment</label>
+                            <div id="treatmentList">
+                                <div class="treatment-item">
+                                    <input type="text" class="form-control" name="medicine[]" placeholder="Medicine">
+                                    <input type="text" class="form-control" name="dosage[]" placeholder="Dosage">
+                                    <input type="text" class="form-control" name="duration[]" placeholder="Duration">
+                                </div>
+                            </div>
+                            <button type="button" class="add-btn" onclick="addTreatmentField()">+ Add Medicine</button>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="advice">Additional Advice</label>
+                            <textarea id="advice" name="advice" class="form-control" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nextVisit">Next Visit</label>
+                            <input type="date" id="nextVisit" name="nextVisit" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="submit-btn">Save Prescription</button>
+                        <button type="button" class="download-btn" onclick="downloadPrescription()">Download PDF</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update these initial values at the top of your script
+let currentPatientType = '';
+let patientCounter = 1; // Changed from 5 to 1
+let opdCount = 0;  // Changed from 92 to 0
+let ipdCount = 0;
+let operationsCount = 0;
+let operationPatients = []; 
+let allPatients = [];
+
+// Initialize arrays with localStorage
+let deathRecords = JSON.parse(localStorage.getItem('deathRecords')) || [];
+let visitRecords = JSON.parse(localStorage.getItem('visitRecords')) || [];
+
+// Add these variables at the top of your script
+let operations = JSON.parse(localStorage.getItem('operations')) || [];
+let operationCounter = parseInt(localStorage.getItem('operationCounter')) || 1;
+
+// Prescription handling functions
+let prescriptions = JSON.parse(localStorage.getItem('prescriptions')) || {};
+
+function openPrescriptionModal(patientId) {
+    const patient = allPatients.find(p => p.id === parseInt(patientId));
+    if (!patient) {
+        alert('Patient not found!');
+        return;
+    }
+    
+    const modal = document.getElementById('prescriptionModal');
+    modal.style.display = 'block';
+    document.getElementById('patientId').value = patientId;
+    
+    // Display patient info
+    document.getElementById('prescriptionPatientInfo').innerHTML = `
+        <h3>${patient.name}</h3>
+        <p>ID: ${patient.subId} | Species: ${patient.species} | Sex: ${patient.sex}</p>
+        <p>Village: ${patient.village} | Mobile: ${patient.mobile}</p>
+    `;
+    
+    // Load existing prescription if any
+    if (prescriptions[patientId]) {
+        const rx = prescriptions[patientId];
+        document.getElementById('history').value = rx.history || '';
+        document.getElementById('clinicalSigns').value = rx.clinicalSigns || '';
+        document.getElementById('diagnosis').value = rx.diagnosis || '';
+        document.getElementById('advice').value = rx.advice || '';
+        document.getElementById('nextVisit').value = rx.nextVisit || '';
+        
+        // Load treatments
+        document.getElementById('treatmentList').innerHTML = '';
+        if (rx.treatments && rx.treatments.length > 0) {
+            rx.treatments.forEach(t => {
+                addTreatmentField(t.medicine, t.dosage, t.duration);
+            });
+        } else {
+            addTreatmentField();
+        }
+    } else {
+        // Reset form for new prescription
+        document.getElementById('prescriptionForm').reset();
+        document.getElementById('treatmentList').innerHTML = '';
+        addTreatmentField();
+    }
+}
+
+function closePrescriptionModal() {
+    document.getElementById('prescriptionModal').style.display = 'none';
+    document.getElementById('prescriptionForm').reset();
+    document.getElementById('treatmentList').innerHTML = '';
+    addTreatmentField();
+}
+
+function addTreatmentField(medicine = '', dosage = '', duration = '') {
+    const div = document.createElement('div');
+    div.className = 'treatment-item';
+    div.innerHTML = `
+        <input type="text" class="form-control" name="medicine[]" placeholder="Medicine" value="${medicine}">
+        <input type="text" class="form-control" name="dosage[]" placeholder="Dosage" value="${dosage}">
+        <input type="text" class="form-control" name="duration[]" placeholder="Duration" value="${duration}">
+        <button type="button" class="delete-btn" onclick="this.parentElement.remove()">×</button>
+    `;
+    document.getElementById('treatmentList').appendChild(div);
+}
+
+// Add prescription form submit handler
+document.getElementById('prescriptionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const patientId = document.getElementById('patientId').value;
+    
+    // Collect treatment data
+    const medicines = Array.from(document.getElementsByName('medicine[]')).map(input => input.value);
+    const dosages = Array.from(document.getElementsByName('dosage[]')).map(input => input.value);
+    const durations = Array.from(document.getElementsByName('duration[]')).map(input => input.value);
+    
+    const treatments = medicines.map((medicine, index) => ({
+        medicine,
+        dosage: dosages[index],
+        duration: durations[index]
+    })).filter(t => t.medicine); // Only include treatments with medicine specified
+    
+    const prescription = {
+        date: new Date().toISOString(),
+        history: document.getElementById('history').value,
+        clinicalSigns: document.getElementById('clinicalSigns').value,
+        diagnosis: document.getElementById('diagnosis').value,
+        treatments: treatments,
+        advice: document.getElementById('advice').value,
+        nextVisit: document.getElementById('nextVisit').value
+    };
+    
+    prescriptions[patientId] = prescription;
+    localStorage.setItem('prescriptions', JSON.stringify(prescriptions));
+    
+    alert('Prescription saved successfully!');
+    closePrescriptionModal();
+});
+
+        // Generate auto numbers
+        function generateAutoNumbers() {
+            const currentYear = new Date().getFullYear();
+            const currentMonth = new Date().getMonth() + 1;
+            
+            // Fix string template literals
+            const annualNo = `${currentYear}-${String(patientCounter).padStart(4, '0')}`;
+            const monthlyNo = `${currentYear}${String(currentMonth).padStart(2, '0')}-${String(patientCounter).padStart(3, '0')}`;
+            
+            document.getElementById('annualNo').value = annualNo;
+            document.getElementById('monthlyNo').value = monthlyNo;
+        }
+
+        // Update summary cards
+        function updateSummaryCards() {
+            const today = new Date().toISOString().split('T')[0];
+    
+    // Calculate today's counts
+    const todayOpd = allPatients.filter(p => p.date === today && p.type === 'OPD').length;
+    const todayIpd = allPatients.filter(p => p.date === today && p.type === 'IPD').length;
+    const todayOps = operations.filter(op => op.date === today).length;
+    
+    // Calculate total counts
+    const totalOpd = allPatients.filter(p => p.type === 'OPD').length;
+    const totalIpd = allPatients.filter(p => p.type === 'IPD').length;
+    const totalOps = operations.length;
+    
+    // Update the display
+    document.getElementById('opdCount').textContent = todayOpd;
+    document.getElementById('totalOpdCount').textContent = totalOpd;
+    document.getElementById('ipdCount').textContent = todayIpd;
+    document.getElementById('totalIpdCount').textContent = totalIpd;
+    document.getElementById('operationsCount').textContent = todayOps;
+    document.getElementById('totalOperations').textContent = totalOps;
+    
+    // Update operations page cards
+    document.getElementById('opdOperations').textContent = operationPatients.filter(p => p.type === 'OPD').length;
+    document.getElementById('ipdOperations').textContent = operationPatients.filter(p => p.type === 'IPD').length;
+        }
+
+        // Render patient table
+        function renderPatientsTable() {
+            const tbody = document.querySelector('#dashboardContent table tbody');
+            tbody.innerHTML = '';
+            
+            // Get today's date for highlighting
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Show all patients, sorted by date (most recent first)
+            const sortedPatients = [...allPatients].sort((a, b) => 
+                new Date(b.date) - new Date(a.date)
+            );
+            
+            if (sortedPatients.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 20px; color: #666;">
+                            No patients registered
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            sortedPatients.forEach(patient => {
+                const row = document.createElement('tr');
+                // Highlight today's patients
+                if (patient.date === today) {
+                    row.classList.add('today-row');
+                }
+                
+                row.innerHTML = `
+                    <td>${patient.id}</td>
+                    <td>${patient.name}<br><span class="sub-id">${patient.subId}</span></td>
+                    <td>${patient.species} / ${patient.sex.toUpperCase()}</td>
+                    <td>${formatDate(patient.date)}<br>${patient.time || ''}</td>
+                    <td>${patient.mobile}</td>
+                    <td>
+                        <span class="new">${patient.status}</span><br>
+                        ${patient.donation ? `<span class="paid">PAID ${patient.donation}</span>` : ''}
+                    </td>
+                    <td><span class="offline">OFFLINE</span></td>
+                    <td>
+                        <button class="prescription-btn" onclick="openPrescriptionModal(${patient.id})">📋 Prescription</button>
+                        <button class="delete-btn" onclick="deletePatient(${patient.id})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Render operations table
+        function renderOperationsTable() {
+            const tbody = document.querySelector('#operationsTable tbody');
+            tbody.innerHTML = '';
+            
+            if (operations.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 20px; color: #666;">
+                            No operations recorded
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            operations.forEach(op => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${op.operationNumber}</td>
+                    <td>${op.patientName}</td>
+                    <td>${formatDate(op.date)}</td>
+                    <td>${op.village}</td>
+                    <td>${op.tagNo || 'N/A'}</td>
+                    <td>${op.procedure}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteOperation(${op.id})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update the renderDeathRecords function
+function renderDeathRecords() {
+    const tbody = document.querySelector('#deathRecordsTable tbody');
+    tbody.innerHTML = '';
+    
+    if (deathRecords.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="9" style="text-align: center; padding: 20px; color: #666;">
+                    No death records found
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    deathRecords.forEach(record => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${formatDate(record.date)}</td>
+            <td>${record.animalType}</td>
+            <td>${record.tagNo}</td>
+            <td>${record.village}</td>
+            <td>${record.mobile}</td>
+            <td>${record.cause}</td>
+            <td>${record.remarks}</td>
+            <td>${record.recordedBy}</td>
+            <td>
+                <button class="delete-btn" onclick="deleteDeathRecord(${record.id})">Delete</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    
+    document.getElementById('totalDeaths').textContent = deathRecords.length;
+}
+
+function renderVisitRecords() {
+    const tbody = document.querySelector('#visitRecordsTable tbody');
+    tbody.innerHTML = '';
+    
+    if (visitRecords.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 20px; color: #666;">
+                    No visit records found
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    // Sort visits by date and time
+    const sortedVisits = [...visitRecords].sort((a, b) => {
+        const dateCompare = new Date(b.date) - new Date(a.date);
+        if (dateCompare !== 0) return dateCompare;
+        return b.time.localeCompare(a.time);
+    });
+    
+    sortedVisits.forEach(record => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${formatDate(record.date)}<br>${formatTime(record.time)}</td>
+            <td>${record.patientName}</td>
+            <td>${record.purpose}</td>
+            <td><span class="new">${record.status}</span></td>
+            <td>
+                <button class="delete-btn" onclick="deleteVisitRecord(${record.id})">Delete</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Content switching function
+function showContent(contentType) {
+    // Hide all content sections
+    document.getElementById('dashboardContent').style.display = 'none';
+    document.getElementById('operationsContent').style.display = 'none';
+    document.getElementById('deathRecordsContent').style.display = 'none';
+    document.getElementById('visitRecordsContent').style.display = 'none';
+
+    // Show selected content
+    switch(contentType) {
+        case 'dashboard':
+            document.getElementById('dashboardContent').style.display = 'block';
+            break;
+        case 'operations':
+            document.getElementById('operationsContent').style.display = 'block';
+            renderOperationsTable();
+            break;
+        case 'deathRecords':
+            document.getElementById('deathRecordsContent').style.display = 'block';
+            renderDeathRecords();
+            break;
+        case 'visitRecords':
+            document.getElementById('visitRecordsContent').style.display = 'block';
+            renderVisitRecords();
+            updateVisitCounters();
+            break;
+    }
+
+    // Fix the querySelector syntax
+    document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+    const currentLink = document.querySelector(`.sidebar a[onclick="showContent('${contentType}')"]`);
+    if (currentLink) currentLink.classList.add('active');
+}
+
+// Form handlers
+document.getElementById('deathRecordForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const newDeath = {
+        id: Date.now(),
+        date: formData.get('deathDate'),
+        animalType: formData.get('animalType'),
+        tagNo: formData.get('tagNo') || 'N/A',
+        village: formData.get('village'),
+        mobile: formData.get('mobile') || 'N/A',
+        cause: formData.get('causeOfDeath'),
+        remarks: formData.get('remarks') || '',
+        recordedBy: 'Administrator'
+    };
+    
+    deathRecords.push(newDeath);
+    localStorage.setItem('deathRecords', JSON.stringify(deathRecords));
+    renderDeathRecords();
+    
+    // Show success message
+    const successMsg = document.createElement('div');
+    successMsg.className = 'success-message';
+    successMsg.textContent = '✔ Death record saved successfully!';
+    this.appendChild(successMsg);
+    setTimeout(() => successMsg.remove(), 3000);
+    
+    this.reset();
+});
+
+document.getElementById('visitForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const newVisit = {
+        id: Date.now(),
+        date: formData.get('visitDate'),
+        time: formData.get('visitTime'),
+        patientName: formData.get('patientName'),
+        purpose: formData.get('visitPurpose'),
+        status: 'NEW'
+    };
+    visitRecords.push(newVisit);
+    localStorage.setItem('visitRecords', JSON.stringify(visitRecords));
+    renderVisitRecords();
+    updateVisitCounters();
+
+    // Update dashboard counter
+    document.querySelector('.card.yellow h3').textContent = 
+        visitRecords.filter(v => v.date === new Date().toISOString().split('T')[0]).length;
+
+    // Show success message
+    const successMsg = document.createElement('div');
+    successMsg.className = 'success-message';
+    successMsg.textContent = '✔ Visit record saved successfully!';
+    this.appendChild(successMsg);
+    setTimeout(() => successMsg.remove(), 3000);
+
+    // Reset form
+    this.reset();
+});
+
+// Fix the generateOperationNumber function
+function generateOperationNumber() {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const opNum = String(operationCounter).padStart(3, '0');
+    return `OP${year}${month}${day}-${opNum}`;
+}
+
+// Update the operation form handler
+document.getElementById('operationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const opNumber = generateOperationNumber();
+    
+    const newOperation = {
+        id: Date.now(),
+        operationNumber: opNumber,
+        patientName: formData.get('operationName'),
+        date: formData.get('operationDate'),
+        village: formData.get('operationVillage'),
+        tagNo: formData.get('operationTagNo'),
+        procedure: formData.get('operationProcedure')
+    };
+    
+    // Add to operations array
+    operations.push(newOperation);
+    
+    // Increment and save counter
+    operationCounter++;
+    localStorage.setItem('operationCounter', operationCounter);
+    
+    // Save operations to localStorage
+    localStorage.setItem('operations', JSON.stringify(operations));
+    
+    // Update UI
+    renderOperationsTable();
+    operationsCount = operations.length;
+    updateSummaryCards();
+    
+    // Show success message
+    const successMsg = document.createElement('div');
+    successMsg.className = 'success-message';
+    successMsg.textContent = '✔ Operation saved successfully!';
+    this.appendChild(successMsg);
+    setTimeout(() => successMsg.remove(), 3000);
+    
+    // Reset form and set new operation number
+    this.reset();
+    document.getElementById('operationNumber').value = generateOperationNumber();
+});
+
+// Add these delete functions
+function deletePatient(id) {
+    if (confirm('Are you sure you want to delete this patient?')) {
+        allPatients = allPatients.filter(patient => patient.id !== id);
+        localStorage.setItem('allPatients', JSON.stringify(allPatients));
+        
+        // Update counters
+        const today = new Date().toISOString().split('T')[0];
+        opdCount = allPatients.filter(p => p.date === today && p.type === 'OPD').length;
+        ipdCount = allPatients.filter(p => p.date === today && p.type === 'IPD').length;
+        
+        localStorage.setItem('opdCount', opdCount);
+        localStorage.setItem('ipdCount', ipdCount);
+        
+        renderPatientsTable();
+        updateSummaryCards();
+    }
+}
+
+function deleteOperation(id) {
+    if (confirm('Are you sure you want to delete this operation?')) {
+        operations = operations.filter(op => op.id !== id);
+        localStorage.setItem('operations', JSON.stringify(operations));
+        operationsCount = operations.length;
+        localStorage.setItem('operationsCount', operationsCount);
+        renderOperationsTable();
+        updateSummaryCards();
+    }
+}
+
+function deleteDeathRecord(id) {
+    if (confirm('Are you sure you want to delete this death record?')) {
+        deathRecords = deathRecords.filter(record => record.id !== id);
+        localStorage.setItem('deathRecords', JSON.stringify(deathRecords));
+        renderDeathRecords();
+    }
+}
+
+function deleteVisitRecord(id) {
+    if (confirm('Are you sure you want to delete this visit record?')) {
+        visitRecords = visitRecords.filter(record => record.id !== id);
+        localStorage.setItem('visitRecords', JSON.stringify(visitRecords));
+        renderVisitRecords();
+        updateVisitCounters();
+    }
+}
+
+// Add this function to update visit counters
+function updateVisitCounters() {
+    const today = new Date().toISOString().split('T')[0];
+    const todayVisits = visitRecords.filter(v => v.date === today);
+    
+    document.getElementById('totalVisits').textContent = todayVisits.length;
+    
+    const morningVisits = todayVisits.filter(v => {
+        const hour = parseInt(v.time.split(':')[0]);
+        return hour < 12;
+    }).length;
+    
+    const eveningVisits = todayVisits.filter(v => {
+        const hour = parseInt(v.time.split(':')[0]);
+        return hour >= 12;
+    }).length;
+    
+    document.getElementById('morningVisits').textContent = morningVisits;
+    document.getElementById('eveningVisits').textContent = eveningVisits;
+    
+    // Update dashboard visit counter
+    document.querySelector('.card.yellow h3').textContent = todayVisits.length;
+}
+
+// Add these functions for patient modal handling
+function openPatientModal() {
+    document.getElementById('patientModal').style.display = 'block';
+    document.getElementById('patientTypeSelection').style.display = 'block';
+    document.getElementById('patientForm').style.display = 'none';
+}
+
+function closePatientModal() {
+    document.getElementById('patientModal').style.display = 'none';
+    document.getElementById('registrationForm').reset();
+}
+
+function selectPatientType(type) {
+    currentPatientType = type;
+    document.getElementById('patientTypeSelection').style.display = 'none';
+    document.getElementById('patientForm').style.display = 'block';
+    generateAutoNumbers();
+}
+
+function goBackToSelection() {
+    document.getElementById('patientTypeSelection').style.display = 'block';
+    document.getElementById('patientForm').style.display = 'none';
+    document.getElementById('registrationForm').reset();
+}
+
+// Update the patient registration form handler
+document.getElementById('registrationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const today = new Date().toISOString().split('T')[0];
+    
+    const newPatient = {
+        id: Date.now(), // Using timestamp as unique ID
+        name: formData.get('name').toUpperCase(),
+        subId: `SH${new Date().toISOString().slice(2,4)}${String(patientCounter).padStart(8, '0')}`,
+        type: currentPatientType.toUpperCase(),
+        date: today,
+        species: formData.get('species'),
+        sex: formData.get('sex'),
+        village: formData.get('village'),
+        mobile: formData.get('mobile'),
+        disease: formData.get('disease'),
+        tagNo: formData.get('tagNo'),
+        donation: formData.get('donation'),
+        operation: formData.get('operation'),
+        time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+        status: 'NEW'
+    };
+
+    // Update counters and arrays
+    allPatients.push(newPatient);
+    patientCounter++;
+    
+    if (currentPatientType.toUpperCase() === 'OPD') {
+        opdCount++;
+    } else {
+        ipdCount++;
+    }
+
+    // Save to localStorage
+    localStorage.setItem('allPatients', JSON.stringify(allPatients));
+    localStorage.setItem('patientCounter', patientCounter);
+    localStorage.setItem('opdCount', opdCount);
+    localStorage.setItem('ipdCount', ipdCount);
+
+    // Check if operation is required
+    if (newPatient.operation && newPatient.operation.toLowerCase() === 'yes') {
+        operationPatients.push(newPatient);
+        operationsCount++;
+        localStorage.setItem('operationsCount', operationsCount);
+        localStorage.setItem('operationPatients', JSON.stringify(operationPatients));
+    }
+
+    // Update UI
+    updateSummaryCards();
+    renderPatientsTable();
+
+    // Show success message and close modal
+    alert('Patient registered successfully!');
+    closePatientModal();
+});
+
+// Update the DOMContentLoaded event handler
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize theme
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    const themeButtons = document.querySelectorAll('.theme-btn');
+    themeButtons.forEach(btn => btn.textContent = savedTheme === 'dark' ? '🌞' : '🌓');
+    
+    // Load data from localStorage
+    allPatients = JSON.parse(localStorage.getItem('allPatients')) || [];
+    operations = JSON.parse(localStorage.getItem('operations')) || [];
+    deathRecords = JSON.parse(localStorage.getItem('deathRecords')) || [];
+    visitRecords = JSON.parse(localStorage.getItem('visitRecords')) || [];
+    
+    // Initialize counters
+    patientCounter = parseInt(localStorage.getItem('patientCounter')) || 1;
+    operationCounter = parseInt(localStorage.getItem('operationCounter')) || 1;
+    
+    // Calculate today's counts
+    const today = new Date().toISOString().split('T')[0];
+    opdCount = allPatients.filter(p => p.date === today && p.type === 'OPD').length;
+    ipdCount = allPatients.filter(p => p.date === today && p.type === 'IPD').length;
+    operationsCount = operations.filter(op => op.date === today).length;
+    
+    
+    // Update UI
+    renderPatientsTable();
+    renderOperationsTable();
+    renderDeathRecords();
+    renderVisitRecords();
+    updateSummaryCards();
+    updateVisitCounters();
+    
+    // Set today's date in all date inputs
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        input.value = today;
+    });
+});
+
+// Dark mode toggle
+function toggleDarkMode() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    
+    // Update button text
+    const buttons = document.querySelectorAll('.theme-btn');
+    buttons.forEach(btn => btn.textContent = newTheme === 'dark' ? '🌞' : '🌓');
+}
+
+// Add this function to clear all data
+function clearAllData() {
+    allPatients = [];
+    patientCounter = 1;
+    opdCount = 0;
+    ipdCount = 0;
+    operationsCount = 0;
+    operationPatients = [];
+    operations = [];
+    deathRecords = [];
+    visitRecords = [];
+    
+    localStorage.clear();
+    
+    renderPatientsTable();
+    updateSummaryCards();
+    
+    if (document.getElementById('operationNumber')) {
+        document.getElementById('operationNumber').value = generateOperationNumber();
+    }
+}
+
+// Add this helper function
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
+
+// Add this after your existing functions
+
+function downloadSectionData(section, period = 'today') {
+    const wb = XLSX.utils.book_new();
+    let data = [];
+    let sheetName, filename;
+    
+    // Get date ranges
+    const today = new Date().toISOString().split('T')[0];
+    const selectedMonth = document.getElementById(`${section}MonthSelector`)?.value || 
+                         document.getElementById('monthSelector')?.value;
+    
+    if (!selectedMonth && period === 'month') {
+        alert('Please select a month first');
+        return;
+    }
+
+    const [yearStr, monthStr] = selectedMonth ? selectedMonth.split('-') : [new Date().getFullYear(), new Date().getMonth() + 1];
+    const year = parseInt(yearStr);
+    const month = parseInt(monthStr);
+    
+    function isInSelectedMonth(dateStr) {
+        const date = new Date(dateStr);
+        return date.getFullYear() === year && (date.getMonth() + 1) === month;
+    }
+    
+    switch(section) {
+        case 'patients':
+            const filteredPatients = period === 'today' 
+                ? allPatients.filter(p => p.date === today)
+                : allPatients.filter(p => isInSelectedMonth(p.date));
+            
+            if (filteredPatients.length === 0) {
+                alert(`No patients registered ${period === 'today' ? 'today' : 'in selected month'}`);
+                return;
+            }
+            
+            data = filteredPatients.map(p => ({
+                'Patient ID': p.id,
+                'Name': p.name,
+                'Sub ID': p.subId,
+                'Type': p.type,
+                'Date': formatDate(p.date),
+                'Time': p.time || '',
+                'Species': p.species,
+                'Sex': p.sex,
+                'Village': p.village,
+                'Mobile': p.mobile,
+                'Disease': p.disease,
+                'Tag No': p.tagNo || '',
+                'Donation': p.donation || '',
+                'Operation Required': p.operation
+            }));
+            sheetName = 'Patients';
+            break;
+            
+        case 'operations':
+            const filteredOperations = period === 'today'
+                ? operations.filter(op => op.date === today)
+                : operations.filter(op => isInSelectedMonth(op.date));
+                
+            if (filteredOperations.length === 0) {
+                alert(`No operations recorded ${period === 'today' ? 'today' : 'in selected month'}`);
+                return;
+            }
+            
+            data = filteredOperations.map(op => ({
+                'Operation No': op.operationNumber,
+                'Patient Name': op.patientName,
+                'Date': formatDate(op.date),
+                'Village': op.village,
+                'Tag No': op.tagNo || 'N/A',
+                'Procedure': op.procedure
+            }));
+            sheetName = 'Operations';
+            break;
+            
+        case 'deaths':
+            const filteredDeaths = period === 'today'
+                ? deathRecords.filter(d => d.date === today)
+                : deathRecords.filter(d => isInSelectedMonth(d.date));
+                
+            if (filteredDeaths.length === 0) {
+                alert(`No death records found ${period === 'today' ? 'today' : 'in selected month'}`);
+                return;
+            }
+            
+            data = filteredDeaths.map(d => ({
+                'Date': formatDate(d.date),
+                'Species': d.animalType,
+                'Tag No': d.tagNo || 'N/A',
+                'Village': d.village,
+                'Mobile': d.mobile || 'N/A',
+                'Cause of Death': d.cause,
+                'Remarks': d.remarks || '',
+                'Recorded By': d.recordedBy
+            }));
+            sheetName = 'Death Records';
+            break;
+            
+        case 'visits':
+            const filteredVisits = period === 'today'
+                ? visitRecords.filter(v => v.date === today)
+                : visitRecords.filter(v => isInSelectedMonth(v.date));
+                
+            if (filteredVisits.length === 0) {
+                alert(`No visit records found ${period === 'today' ? 'today' : 'in selected month'}`);
+                return;
+            }
+            
+            data = filteredVisits.map(v => ({
+                'Date': formatDate(v.date),
+                'Time': v.time,
+                'Patient Name': v.patientName,
+                'Purpose': v.purpose,
+                'Status': v.status
+            }));
+            sheetName = 'Visit Records';
+            break;
+    }
+    
+    if (data.length > 0) {
+        try {
+            const ws = XLSX.utils.json_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, sheetName);
+            
+            // Create filename with date/month
+            const fileDate = period === 'today' ? today : `${yearStr}-${monthStr}`;
+            const filename = `${section}_${fileDate}.xlsx`;
+            
+            // Save the file
+            XLSX.writeFile(wb, filename);
+        } catch (error) {
+            console.error('Error generating Excel file:', error);
+            alert('Error generating Excel file. Please try again.');
+        }
+    } else {
+        alert(`No ${section} data available for the selected period.`);
+    }
+}
+
+// Prescription PDF download function
+function downloadPrescription() {
+    const patientId = document.getElementById('patientId').value;
+    const patient = allPatients.find(p => p.id === parseInt(patientId));
+    const prescription = prescriptions[patientId];
+    
+    if (!patient || !prescription) {
+        alert('No prescription data found');
+        return;
+    }
+    
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // Header
+        doc.setFontSize(20);
+        doc.text('AHINSADHAM VETERINARY HOSPITAL', 105, 20, { align: 'center' });
+        doc.setFontSize(16);
+        doc.text('DR. HARSHAL SOLANKI', 105, 30, { align: 'center' });
+        doc.setFontSize(12);
+        doc.text('VETERINARY OFFICER', 105, 37, { align: 'center' });
+        
+        // Line under header
+        doc.setLineWidth(0.5);
+        doc.line(20, 42, 190, 42);
+        
+        // Patient info
+        doc.setFontSize(12);
+        doc.text(`Patient Name: ${patient.name}`, 20, 55);
+        doc.text(`Species: ${patient.species}`, 120, 55);
+        doc.text(`ID: ${patient.subId}`, 20, 62);
+        doc.text(`Date: ${formatDate(new Date())}`, 120, 62);
+        doc.text(`Mobile: ${patient.mobile}`, 20, 69);
+        doc.text(`Village: ${patient.village}`, 120, 69);
+        
+        let yPos = 85;
+        
+        // History
+        doc.setFont("helvetica", "bold");
+        doc.text('History:', 20, yPos);
+        doc.setFont("helvetica", "normal");
+        const historyLines = doc.splitTextToSize(prescription.history, 170);
+        doc.text(historyLines, 20, yPos + 7);
+        yPos += (historyLines.length * 7) + 15;
+        
+        // Clinical Signs
+        doc.setFont("helvetica", "bold");
+        doc.text('Clinical Signs:', 20, yPos);
+        doc.setFont("helvetica", "normal");
+        const signsLines = doc.splitTextToSize(prescription.clinicalSigns, 170);
+        doc.text(signsLines, 20, yPos + 7);
+        yPos += (signsLines.length * 7) + 15;
+        
+        // Diagnosis
+        doc.setFont("helvetica", "bold");
+        doc.text('Diagnosis:', 20, yPos);
+        doc.setFont("helvetica", "normal");
+        const diagnosisLines = doc.splitTextToSize(prescription.diagnosis, 170);
+        doc.text(diagnosisLines, 20, yPos + 7);
+        yPos += (diagnosisLines.length * 7) + 15;
+        
+        // Treatment
+        doc.setFont("helvetica", "bold");
+        doc.text('Treatment:', 20, yPos);
+        doc.setFont("helvetica", "normal");
+        yPos += 10;
+        
+        prescription.treatments.forEach((t, index) => {
+            doc.text(`${index + 1}. ${t.medicine}`, 25, yPos);
+            doc.text(`Dosage: ${t.dosage}`, 40, yPos + 7);
+            doc.text(`Duration: ${t.duration}`, 40, yPos + 14);
+            yPos += 25;
+        });
+        
+        // Additional Advice
+        if (prescription.advice) {
+            doc.setFont("helvetica", "bold");
+            doc.text('Additional Advice:', 20, yPos);
+            doc.setFont("helvetica", "normal");
+            const adviceLines = doc.splitTextToSize(prescription.advice, 170);
+            doc.text(adviceLines, 20, yPos + 7);
+            yPos += (adviceLines.length * 7) + 15;
+        }
+        
+        // Next Visit
+        if (prescription.nextVisit) {
+            doc.setFont("helvetica", "bold");
+            doc.text('Next Visit:', 20, yPos);
+            doc.setFont("helvetica", "normal");
+            doc.text(formatDate(prescription.nextVisit), 20, yPos + 7);
+            yPos += 20;
+        }
+        
+        // Doctor's signature
+        yPos = Math.max(yPos + 20, 240);
+        doc.text('DR. HARSHAL SOLANKI', 150, yPos, { align: 'center' });
+        doc.text('VETERINARY OFFICER', 150, yPos + 7, { align: 'center' });
+        
+        // Save PDF
+        doc.save(`prescription_${patient.subId}_${formatDate(new Date())}.pdf`);
+        
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        alert('Error generating prescription PDF. Please try again.');
+    }
+}
+    </script>
+</body>
+</html>
